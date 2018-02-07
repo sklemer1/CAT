@@ -205,6 +205,7 @@ abstract class WindowsCommon extends \core\DeviceConfig {
     protected function signInstaller() {
         $fileName = $this->installerBasename . '.exe';
         if (!$this->sign) {
+            $this->loggerInstance->debug(4, "signInstaller: Don't sign, just rename to: $fileName!\n");
             rename("installer.exe", $fileName);
             return $fileName;
         }
@@ -307,7 +308,7 @@ Caption "' . $this->translateString(sprintf(WindowsCommon::sprint_nsi(_("%s inst
 
             $out .= "\"\n";
         }
-        $this->loggerInstance->debug(4, "Info file returned: $out");
+        $this->loggerInstance->debug(4, "Info file returned: $out\n");
         return $out;
     }
 
