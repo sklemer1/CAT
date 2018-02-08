@@ -83,7 +83,7 @@ class Skinjob {
      * @return string|boolean the URL to the resource, or FALSE if this file does not exist
      * @throws Exception if something went wrong during the URL construction
      */
-    public function findResourceUrl($resourcetype, $filename) {
+    public function findResourceUrl($resourcetype, $filename, $submodule = '') {
         switch ($resourcetype) {
             case "CSS":
                 $path = "/resources/css/";
@@ -102,22 +102,17 @@ class Skinjob {
         }
 
         // does the file exist in the current skin's directory? Has precedence
-        if (file_exists(__DIR__ . "/../../skins/" . $this->skin . $path . $filename)) {
+        if ($submodule !== '' && file_exists(__DIR__ . "/../../skins/" . $this->skin . "/" . $submodule . $path . $filename)) {
+            $extrapath = "/skins/" . $this->skin . "/" . $submodule;
+        }
+        elseif (file_exists(__DIR__ . "/../../skins/" . $this->skin . $path . $filename)) {
             $extrapath = "/skins/" . $this->skin;
         } elseif (file_exists(__DIR__ . "/../../" . $path . $filename)) {
             $extrapath = "";
         } else {
             return FALSE;
-        }
-
-        $validator = new \web\lib\common\InputValidation();
-        $host = $validator->hostname($_SERVER['SERVER_NAME']); 
-        if ($host === FALSE) {
-            throw new Exception("We don't know our own hostname?!");
-        }
-        $url = "//" . $host; // omitting http or https means "on same protocol"
-        
-        return htmlspecialchars($url . CONFIG['PATHS']['cat_base_url'] . $extrapath . $path . $filename, ENT_QUOTES);
+        }       
+        return htmlspecialchars(\core\CAT::getRootUrlPath() . $extrapath . $path . $filename, ENT_QUOTES);
     }
 
 }

@@ -103,6 +103,8 @@ class UIElements {
             _("Real Name") => "user:realname",
             _("E-Mail Address") => "user:email",
             _("Remove/Disable SSID") => "media:remove_SSID",
+            _("Content Filter Proxy, HTTP") => "media:force_proxy_http",
+            _("Content Filter Proxy, HTTPS") => "media:force_proxy_https",
             _("Custom CSS file for User Area") => "fed:css_file",
             sprintf(_("%s Logo"), $this->nomenclature_fed) => "fed:logo_file",
             _("Preferred Skin for User Area") => "fed:desired_skin",
@@ -124,20 +126,6 @@ class UIElements {
             throw new \Exception("The translation of an option name was requested, but the option is not known to the system: " . htmlentities($input));
         }
         return $find[0];
-    }
-
-    public function tooltip($input) {
-        $descriptions = [];
-        if (count(CONFIG_CONFASSISTANT['CONSORTIUM']['ssid']) > 0) {
-            $descriptions[sprintf(_("This attribute can be set if you want to configure an additional SSID besides the default SSIDs for %s. It is almost always a bad idea not to use the default SSIDs. The only exception is if you have premises with an overlap of the radio signal with another %s hotspot. Typical misconceptions about additional SSIDs include: I want to have a local SSID for my own users. It is much better to use the default SSID and separate user groups with VLANs. That approach has two advantages: 1) your users will configure %s properly because it is their everyday SSID; 2) if you use a custom name and advertise this one as extra secure, your users might at some point roam to another place which happens to have the same SSID name. They might then be misled to believe that they are connecting to an extra secure network while they are not."), CONFIG_CONFASSISTANT['CONSORTIUM']['display_name'], CONFIG_CONFASSISTANT['CONSORTIUM']['display_name'], CONFIG_CONFASSISTANT['CONSORTIUM']['display_name'])] = "media:SSID";
-        }
-
-        $find = array_search($input, $descriptions);
-
-        if ($find === FALSE) {
-            return "";
-        }
-        return "<span class='tooltip' onclick='alert(\"" . $find . "\")'><img src='../resources/images/icons/question-mark-icon.png" . "'></span>";
     }
 
     /**
@@ -283,9 +271,8 @@ class UIElements {
         if ($checkpublic) {
             // we might be called without session context (filepreview) so get the
             // context if needed
-            if (session_status() != PHP_SESSION_ACTIVE) {
-                session_start();
-            }
+            CAT_session_start();
+            
             $owners = \core\EntityWithDBProperties::isDataRestricted($reference["table"], $reference["rowindex"]);
 
             $ownersCondensed = [];
