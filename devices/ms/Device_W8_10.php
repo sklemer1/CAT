@@ -42,11 +42,20 @@ use \Exception;
     public function writeInstaller() {
         $dom = textdomain(NULL);
         textdomain("devices");
-        // create certificate files and save their names in $caFiles arrary
-        $caFiles = $this->saveCertificateFiles('der');
-        $this->caArray = $this->attributes['internal:CAs'][0];
-        $this->useAnon = $this->attributes['internal:use_anon_outer'] [0] === NULL ? FALSE : TRUE;
-        $this->servers = implode(';', $this->attributes['eap:server_name']);
+        
+        if ($this->selectedEap == \core\common\EAP::EAPTYPE_PWD) {
+            $caFiles=[];
+            $this->caArray = [];
+            $this->useAnon = FALSE;
+            $this->servers = "";
+        }
+        else {
+            // create certificate files and save their names in $caFiles arrary
+            $caFiles = $this->saveCertificateFiles('der');
+            $this->caArray = $this->attributes['internal:CAs'][0];
+            $this->useAnon = $this->attributes['internal:use_anon_outer'] [0] === NULL ? FALSE : TRUE;
+            $this->servers = implode(';', $this->attributes['eap:server_name']);
+        }
         $allSSID = $this->attributes['internal:SSID'];
         $delSSIDs = $this->attributes['internal:remove_SSID'];
         $this->prepareInstallerLang();

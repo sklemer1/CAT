@@ -37,7 +37,13 @@ class Device_Vista7 extends WindowsCommon {
         $dom = textdomain(NULL);
         textdomain("devices");
         // create certificate files and save their names in $caFiles arrary
-        $caFiles = $this->saveCertificateFiles('der');
+        if($this->selectedEap == \core\common\EAP::EAPTYPE_PWD) {
+            $caFiles = [];
+
+        }
+        else {
+            $caFiles = $this->saveCertificateFiles('der');
+        }
 
         $allSSID = $this->attributes['internal:SSID'];
         $delSSIDs = $this->attributes['internal:remove_SSID'];
@@ -97,14 +103,23 @@ class Device_Vista7 extends WindowsCommon {
         $outerUser = '';
         $vistaExt = '';
         $w7Ext = '';
-        $useAnon = $attr['internal:use_anon_outer'] [0];
         $realm = $attr['internal:realm'] [0];
-        if ($useAnon) {
-            $outerUser = $attr['internal:anon_local_value'][0];
+
+        if ($this->selectedEap == \core\common\EAP::EAPTYPE_PWD) {
+            $useAnon=FALSE;
+            $servers="";
+            $caArray=[];
         }
-//   $servers = preg_quote(implode(';',$attr['eap:server_name']));
-        $servers = implode(';', $attr['eap:server_name']);
-        $caArray = $attr['internal:CAs'][0];
+        else {
+            $useAnon = $attr['internal:use_anon_outer'] [0];
+            if ($useAnon) {
+                $outerUser = $attr['internal:anon_local_value'][0];
+            }
+    //   $servers = preg_quote(implode(';',$attr['eap:server_name']));
+            $servers = implode(';', $attr['eap:server_name']);
+            $caArray = $attr['internal:CAs'][0];
+        }
+
         $authorId = "0";
         if ($this->selectedEap == \core\common\EAP::EAPTYPE_TTLS_PAP || $this->selectedEap == \core\common\EAP::EAPTYPE_TTLS_MSCHAP2) {
             $authorId = "67532";
