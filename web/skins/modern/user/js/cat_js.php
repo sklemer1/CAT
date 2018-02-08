@@ -210,7 +210,7 @@ function resetDevices() {
        if(j.local_url !== undefined && j.local_url) 
          txt = txt+'<tr><td><?php escaped_echo(_("WWW:")); ?></td><td><a href="'+j.local_url+'" target="_blank">'+j.local_url+'</a></td></tr>';
        if(j.local_email !== undefined && j.local_email) 
-         txt = txt+'<tr><td><?php escaped_echo(_("email:")); ?></td><td><a href=mailto:"'+j.local_email+'">'+j.local_email+'</a></td></tr>';
+         txt = txt+'<tr><td><?php escaped_echo(_("email:")); ?></td><td><a href="mailto:'+j.local_email+'">'+j.local_email+'</a></td></tr>';
        if(j.local_phone !== undefined && j.local_phone) 
          txt = txt+'<tr><td><?php escaped_echo(_("tel:")); ?></td><td>'+j.local_phone+'</td></tr>';
        if(txt) 
